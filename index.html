@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="PDF စာအုပ်လို ဖတ်နိုင် + Nara Mini TTS နဲ့ အသံနားထောင်နိုင်သော အခမဲ့ Reader" />
+  <meta name="theme-color" content="#8b5a2b" />
+  <title>စာအုပ်ဖတ်စက် · PDF Book + Nara TTS</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <span class="logo-icon">📖</span>
+        <span class="logo-text">စာအုပ်ဖတ်စက်</span>
+      </div>
+      <div class="header-actions">
+        <button id="btn-theme" class="icon-btn" title="အလင်း / အမှောင်">🌓</button>
+        <button id="btn-settings" class="icon-btn" title="ဆက်တင်">⚙️</button>
+      </div>
+    </header>
+
+    <!-- ===== Upload Screen ===== -->
+    <section id="upload-screen" class="screen active">
+      <div class="upload-card">
+        <div class="upload-icon">📄</div>
+        <h1>PDF စာအုပ် တင်ပါ</h1>
+        <p class="subtitle">PDF ကို ဆွဲထည့်ပါ သို့မဟုတ် ရွေးချယ်ပါ · စာအုပ်လို ဖတ်နိုင် · အသံနဲ့ နားထောင်နိုင်</p>
+
+        <div id="drop-zone" class="drop-zone">
+          <input type="file" id="pdf-input" accept="application/pdf" hidden />
+          <button id="btn-select-pdf" class="primary-btn">PDF ရွေးချယ်ရန်</button>
+          <p class="hint">သို့မဟုတ် ဖိုင်ကို ဤနေရာသို့ ဆွဲချပါ</p>
+        </div>
+
+        <div class="features">
+          <div class="feature"><span>📖</span><span>စာအုပ်လို ဖတ်</span></div>
+          <div class="feature"><span>🔊</span><span>Nara Mini TTS</span></div>
+          <div class="feature"><span>🆓</span><span>အခမဲ့</span></div>
+        </div>
+
+        <p class="credit">
+          TTS · <a href="https://huggingface.co/YeeNyunn/nara-mini-v1" target="_blank" rel="noopener">Nara Mini v1</a>
+          · <a href="https://sagapyaw.sagapyaw.workers.dev" target="_blank" rel="noopener">SagaPyaw</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- ===== Reader Screen ===== -->
+    <section id="reader-screen" class="screen">
+      <div class="reader-toolbar">
+        <button id="btn-back" class="icon-btn" title="နောက်သို့">←</button>
+        <div class="page-info">
+          <span id="current-page">1</span> / <span id="total-pages">1</span>
+        </div>
+        <div class="mode-toggle">
+          <button id="mode-text" class="mode-btn active">စာဖတ်</button>
+          <button id="mode-audio" class="mode-btn">အသံနားထောင်</button>
+        </div>
+        <button id="btn-fullscreen" class="icon-btn" title="Fullscreen">⛶</button>
+      </div>
+
+      <div class="reader-main">
+        <div id="book-view" class="book-view">
+          <button id="btn-prev" class="nav-btn left" title="ယခင်စာမျက်နှာ">‹</button>
+          <div class="page-container">
+            <div id="page-content" class="page-content"></div>
+          </div>
+          <button id="btn-next" class="nav-btn right" title="နောက်စာမျက်နှာ">›</button>
+        </div>
+
+        <!-- Audio Panel -->
+        <div id="audio-panel" class="audio-panel hidden">
+          <div class="voice-row">
+            <label>အသံ ရွေးရန်</label>
+            <div class="voices" id="voice-list">
+              <button class="voice-btn active" data-voice="shoon">Shoon</button>
+              <button class="voice-btn" data-voice="thazin">Thazin</button>
+              <button class="voice-btn" data-voice="ko-banyar">Ko Banyar</button>
+              <button class="voice-btn" data-voice="htet-myat">Htet Myat</button>
+            </div>
+          </div>
+
+          <div class="audio-actions">
+            <button id="btn-play-page" class="primary-btn">
+              ▶ ဒီစာမျက်နှာ ဖတ်ပြ
+            </button>
+            <button id="btn-open-sagapyaw" class="secondary-btn">
+              SagaPyaw မှာ ဖွင့်
+            </button>
+            <button id="btn-stop" class="danger-btn hidden">⏹ ရပ်ရန်</button>
+          </div>
+
+          <div id="tts-status" class="tts-status"></div>
+
+          <div class="tts-note">
+            <strong>Nara Mini v1</strong> (YeeNyunn) · Apache-2.0<br>
+            “SagaPyaw မှာ ဖွင့်” ခလုတ်ကို နှိပ်ရင် လက်ရှိစာမျက်နှာကို 
+            <a href="https://sagapyaw.sagapyaw.workers.dev" target="_blank" rel="noopener">SagaPyaw</a> 
+            သို့ ပို့ပြီး အရည်အသွေးမြင့် အသံနဲ့ နားထောင်နိုင်ပါတယ်။
+          </div>
+        </div>
+      </div>
+
+      <div class="progress-bar">
+        <div id="progress-fill" class="progress-fill"></div>
+      </div>
+    </section>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal hidden">
+      <div class="modal-content">
+        <h2>ဆက်တင်</h2>
+
+        <div class="setting-item">
+          <label>စာလုံးအရွယ်</label>
+          <div class="range-row">
+            <input type="range" id="font-size" min="14" max="28" value="18" />
+            <span id="font-size-val">18px</span>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <label>စာကြောင်းအကွာ</label>
+          <div class="range-row">
+            <input type="range" id="line-height" min="1.4" max="2.2" step="0.1" value="1.7" />
+            <span id="line-height-val">1.7</span>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <label>Theme</label>
+          <select id="theme-select">
+            <option value="light">အလင်း</option>
+            <option value="sepia">Sepia</option>
+            <option value="dark">အမှောင်</option>
+          </select>
+        </div>
+
+        <button id="btn-close-settings" class="primary-btn full">ပိတ်ရန်</button>
+      </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay hidden">
+      <div class="spinner"></div>
+      <p id="loading-text">PDF ဖတ်နေသည်...</p>
+    </div>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
